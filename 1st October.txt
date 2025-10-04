@@ -1,0 +1,67 @@
+AWS Bucket accessing using azure instance-
+
+
+create two buckets and replicate and set lifecycle.
+
+create two buckets and enable versioning.
+if not go to properties and enable.
+
+add objects and delete and download and re add again
+
+in n.virginia bucket > select > management > replication > name  > apply to all > same account > create new IAM > storage class > create batch.
+
+in Ohio it will be reflected select > actions > enable ACL > now open using object URL 
+it will show wait for creation and finish and refresh .
+
+
+AWS LOAD BALANCER -
+ELB- elastic load balancing
+
+take 4 instances with same key pair and security groups with redhat,ubuntu and aws Linux.
+install apache on all machines- vim install httpd -y
+
+linux-
+cd /var/www/html/
+echo
+ll
+cd
+cd
+systemctl enable http
+start
+yum install curl
+
+redhat-
+
+ubuntu-
+apt install ^C
+apt update
+apt install apache2
+cd /var/www/html/
+/var/www/html# echo "this " >index.html
+ll
+systemctl start apache2
+cd
+curl http://localhost
+
+redhat-
+cat /etc/os-release
+cd /var/www/html/
+echo " " >index.html
+systemctl start httpd
+systemctl enable httpd
+
+target grp is a collection of your servers.
+ec2 > create target grp>selct instance > target group name > ipv4 >http1 > health check- > next > successfully created 
+select all objects > create 
+.
+create load balancer > application load balancer > internet-facing check > ipv4 >v1a-1d tick > selct sec grp > listening port-80 > 
+
+load balancing to run domain main website-
+
+ec2 > launch template > name > description > browse amis-aws > t3.micro > existing key pair and sec grp >us east 1a > advanced - put script > launch
+
+asg group > name > next > vpc- 1b,c,a > next > attach a new load balancer > internet facing > no vpc lattice > tick two (one )healthchecks >  create target group > desired capapcity-2 > scaling min-1 max=5 > target tracking scaling policy > average cpu utilizations > target val-75 > inst -180 s > no policy >next > next > next > create.
+
+if SNS SET then cloudwatch enable.
+
+autoscaling select > 

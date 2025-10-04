@@ -1,0 +1,515 @@
+sept 26- Jenkins server
+
+by python3-pytest-6.2.2-1.amzn2023.0.3.noarch from amazonlinux
+  - package python3-pytest4-4.6.11-3.amzn2023.0.3.noarch from amazonlinux conflicts with python3.9dist(pytest) provided by python3-pytest-6.2.2-1.amzn2023.0.3.noarch from amazonlinux
+(try to add '--allowerasing' to command line to replace conflicting packages or '--skip-broken' to skip uninstallable packages)
+[root@jenkins ~]# --allowraising
+bash: --allowraising: command not found
+[root@jenkins ~]# systemctl start jenkins
+Failed to start jenkins.service: Unit jenkins.service not found.
+[root@jenkins ~]# systemctl enable jenkins
+Failed to enable unit: Unit file jenkins.service does not exist.
+[root@jenkins ~]# hostname
+jenkins.example.com
+[root@jenkins ~]# yum repolist all
+repo id                             repo name                                                                   status
+amazonlinux                         Amazon Linux 2023 repository                                                enabled
+amazonlinux-debuginfo               Amazon Linux 2023 repository - Debug                                        disabled
+amazonlinux-source                  Amazon Linux 2023 repository - Source packages                              disabled
+jenkins                             Jenkins-stable                                                              enabled
+kernel-livepatch                    Amazon Linux 2023 Kernel Livepatch repository                               enabled
+kernel-livepatch-source             Amazon Linux 2023 Kernel Livepatch repository - Source packages             disabled
+[root@jenkins ~]# systemctl start jenkins
+Failed to start jenkins.service: Unit jenkins.service not found.
+[root@jenkins ~]# yum update java
+Last metadata expiration check: 0:08:43 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[root@jenkins ~]# java --version
+openjdk 17.0.16 2025-07-15 LTS
+OpenJDK Runtime Environment Corretto-17.0.16.8.1 (build 17.0.16+8-LTS)
+OpenJDK 64-Bit Server VM Corretto-17.0.16.8.1 (build 17.0.16+8-LTS, mixed mode, sharing)
+[root@jenkins ~]# apt install openjdk-21-jdk
+bash: apt: command not found
+[root@jenkins ~]# yum install openjdk-21-jdk
+Last metadata expiration check: 0:09:45 ago on Fri Sep 26 06:42:37 2025.
+No match for argument: openjdk-21-jdk
+Error: Unable to find a match: openjdk-21-jdk
+[root@jenkins ~]# yum upgrade
+Last metadata expiration check: 0:10:22 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[root@jenkins ~]# yum upgrade java
+Last metadata expiration check: 0:10:34 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+Nothing to do.
+Complete!
+[root@jenkins ~]# yum install java-21-amazon-corretto -y
+Last metadata expiration check: 0:10:49 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+========================================================================================================================
+ Package                                   Architecture    Version                           Repository            Size
+========================================================================================================================
+Installing:
+ java-21-amazon-corretto                   x86_64          1:21.0.8+9-1.amzn2023.1           amazonlinux          213 k
+Installing dependencies:
+ java-21-amazon-corretto-headless          x86_64          1:21.0.8+9-1.amzn2023.1           amazonlinux           96 M
+
+Transaction Summary
+========================================================================================================================
+Install  2 Packages
+
+Total download size: 97 M
+Installed size: 257 M
+Downloading Packages:
+(1/2): java-21-amazon-corretto-21.0.8+9-1.amzn2023.1.x86_64.rpm                         5.8 MB/s | 213 kB     00:00
+(2/2): java-21-amazon-corretto-headless-21.0.8+9-1.amzn2023.1.x86_64.rpm                 69 MB/s |  96 MB     00:01
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                    67 MB/s |  97 MB     00:01
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Installing       : java-21-amazon-corretto-headless-1:21.0.8+9-1.amzn2023.1.x86_64                                1/2
+  Running scriptlet: java-21-amazon-corretto-headless-1:21.0.8+9-1.amzn2023.1.x86_64                                1/2
+  Installing       : java-21-amazon-corretto-1:21.0.8+9-1.amzn2023.1.x86_64                                         2/2
+  Running scriptlet: java-21-amazon-corretto-1:21.0.8+9-1.amzn2023.1.x86_64                                         2/2
+  Verifying        : java-21-amazon-corretto-1:21.0.8+9-1.amzn2023.1.x86_64                                         1/2
+  Verifying        : java-21-amazon-corretto-headless-1:21.0.8+9-1.amzn2023.1.x86_64                                2/2
+
+Installed:
+  java-21-amazon-corretto-1:21.0.8+9-1.amzn2023.1.x86_64
+  java-21-amazon-corretto-headless-1:21.0.8+9-1.amzn2023.1.x86_64
+
+Complete!
+[root@jenkins ~]# systemctl start jenkins
+Failed to start jenkins.service: Unit jenkins.service not found.
+[root@jenkins ~]# yum install jenkins
+Last metadata expiration check: 0:11:22 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+========================================================================================================================
+ Package                    Architecture              Version                          Repository                  Size
+========================================================================================================================
+Installing:
+ jenkins                    noarch                    2.516.3-1.1                      jenkins                     83 M
+
+Transaction Summary
+========================================================================================================================
+Install  1 Package
+
+Total download size: 83 M
+Installed size: 83 M
+Is this ok [y/N]: y
+Downloading Packages:
+jenkins-2.516.3-1.1.noarch.rpm                                                           24 MB/s |  83 MB     00:03
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                    24 MB/s |  83 MB     00:03
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Running scriptlet: jenkins-2.516.3-1.1.noarch                                                                     1/1
+  Installing       : jenkins-2.516.3-1.1.noarch                                                                     1/1
+  Running scriptlet: jenkins-2.516.3-1.1.noarch                                                                     1/1
+  Verifying        : jenkins-2.516.3-1.1.noarch                                                                     1/1
+
+Installed:
+  jenkins-2.516.3-1.1.noarch
+
+Complete!
+[root@jenkins ~]# systemctl enable jenkins
+Created symlink /etc/systemd/system/multi-user.target.wants/jenkins.service → /usr/lib/systemd/system/jenkins.service.
+[root@jenkins ~]# systemctl start jenkins
+[root@jenkins ~]# cat /var/lib/jenkins/secrets/initialAdminPassword
+e9d3e106dfbb443cb3ebb6197db38368
+[root@jenkins ~]# client_loop: send disconnect: Connection reset
+PS C:\Users\10844406\downloads> ssh -i "dev.pem" ec2-user@ec2-54-210-77-194.compute-1.amazonaws.com
+The authenticity of host 'ec2-54-210-77-194.compute-1.amazonaws.com (54.210.77.194)' can't be established.
+ED25519 key fingerprint is SHA256:r1nLtv1d3HZhe7jgDA4XPmqPP94H+lMTym08WOPpSD0.
+This host key is known by the following other names/addresses:
+    C:\Users\10844406/.ssh/known_hosts:37: ec2-54-162-162-246.compute-1.amazonaws.com
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'ec2-54-210-77-194.compute-1.amazonaws.com' (ED25519) to the list of known hosts.
+   ,     #_
+   ~\_  ####_        Amazon Linux 2023
+  ~~  \_#####\
+  ~~     \###|
+  ~~       \#/ ___   https://aws.amazon.com/linux/amazon-linux-2023
+   ~~       V~' '->
+    ~~~         /
+      ~~._.   _/
+         _/ _/
+       _/m/'
+Last login: Fri Sep 26 06:14:31 2025 from 103.244.155.144
+[ec2-user@jenkins ~]$ sudo su -
+Last login: Fri Sep 26 06:14:39 UTC 2025 on pts/1
+[root@jenkins ~]# passwd
+Changing password for user root.
+New password:
+BAD PASSWORD: The password fails the dictionary check - it is based on a dictionary word
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@jenkins ~]# hostname
+jenkins.example.com
+[root@jenkins ~]# vim etc/fstab
+[root@jenkins ~]# sudo mount -o remount,size=2G /tmp
+[root@jenkins ~]# df -h
+Filesystem        Size  Used Avail Use% Mounted on
+devtmpfs          4.0M     0  4.0M   0% /dev
+tmpfs             453M     0  453M   0% /dev/shm
+tmpfs             181M  432K  181M   1% /run
+/dev/nvme0n1p1     10G  2.6G  7.5G  26% /
+tmpfs             2.0G  4.6M  2.0G   1% /tmp
+/dev/nvme0n1p128   10M  1.3M  8.7M  13% /boot/efi
+tmpfs              91M     0   91M   0% /run/user/1000
+[root@jenkins ~]# vim etc/fstab
+[root@jenkins ~]# vim /etc/fstab
+"/etc/fstab" 5L, 274B written
+[root@jenkins ~]# vim /var/lib/jenkins
+[root@jenkins ~]# cd /var/lib/jenkins
+[root@jenkins jenkins]# ls
+config.xml                                      jenkins.telemetry.Correlator.xml  secret.key.not-so-secret
+hudson.model.UpdateCenter.xml                   jobs                              secrets
+hudson.plugins.git.GitTool.xml                  logs                              updates
+identity.key.enc                                nodeMonitors.xml                  userContent
+jenkins.install.InstallUtil.lastExecVersion     plugins                           users
+jenkins.install.UpgradeWizard.state             queue.xml.bak
+jenkins.model.JenkinsLocationConfiguration.xml  secret.key
+[root@jenkins jenkins]# vim jenkins.model.JenkinsLocationConfiguration.xml
+[root@jenkins jenkins]# systemctl restart jenkins
+[root@jenkins jenkins]# yum install maven -y
+Last metadata expiration check: 3:21:13 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+========================================================================================================================
+ Package                                        Architecture  Version                          Repository          Size
+========================================================================================================================
+Installing:
+ maven                                          noarch        1:3.8.4-3.amzn2023.0.5           amazonlinux         18 k
+Installing dependencies:
+ apache-commons-cli                             noarch        1.5.0-3.amzn2023.0.3             amazonlinux         76 k
+ apache-commons-codec                           noarch        1.15-6.amzn2023.0.3              amazonlinux        303 k
+ apache-commons-io                              noarch        1:2.8.0-7.amzn2023.0.5           amazonlinux        283 k
+ apache-commons-lang3                           noarch        3.18.0-1.amzn2023.0.1            amazonlinux        655 k
+ atinject                                       noarch        1.0.5-3.amzn2023.0.3             amazonlinux         23 k
+ cdi-api                                        noarch        2.0.2-6.amzn2023.0.3             amazonlinux         54 k
+ google-guice                                   noarch        4.2.3-8.amzn2023.0.6             amazonlinux        473 k
+ guava                                          noarch        31.0.1-3.amzn2023.0.6            amazonlinux        2.4 M
+ httpcomponents-client                          noarch        4.5.13-4.amzn2023.0.4            amazonlinux        657 k
+ httpcomponents-core                            noarch        4.4.13-6.amzn2023.0.3            amazonlinux        632 k
+ jakarta-annotations                            noarch        1.3.5-13.amzn2023.0.3            amazonlinux         46 k
+ jansi                                          x86_64        2.4.0-3.amzn2023.0.3             amazonlinux        113 k
+ java-17-amazon-corretto-devel                  x86_64        1:17.0.16+8-1.amzn2023.1         amazonlinux        142 k
+ jcl-over-slf4j                                 noarch        1.7.32-3.amzn2023.0.4            amazonlinux         25 k
+ jsoup                                          noarch        1.16.1-4.amzn2023.0.2            amazonlinux        433 k
+ jsr-305                                        noarch        3.0.2-5.amzn2023.0.4             amazonlinux         32 k
+ maven-amazon-corretto17                        noarch        1:3.8.4-3.amzn2023.0.5           amazonlinux        9.4 k
+ maven-lib                                      noarch        1:3.8.4-3.amzn2023.0.5           amazonlinux        1.5 M
+ maven-resolver                                 noarch        1:1.7.3-3.amzn2023.0.4           amazonlinux        557 k
+ maven-shared-utils                             noarch        3.3.4-4.amzn2023.0.3             amazonlinux        152 k
+ maven-wagon                                    noarch        3.4.2-6.amzn2023.0.4             amazonlinux        113 k
+ plexus-cipher                                  noarch        1.8-3.amzn2023.0.3               amazonlinux         27 k
+ plexus-classworlds                             noarch        2.6.0-10.amzn2023.0.4            amazonlinux         61 k
+ plexus-containers-component-annotations        noarch        2.1.0-9.amzn2023.0.4             amazonlinux         19 k
+ plexus-interpolation                           noarch        1.26-10.amzn2023.0.4             amazonlinux         80 k
+ plexus-sec-dispatcher                          noarch        2.0-3.amzn2023.0.3               amazonlinux         34 k
+ plexus-utils                                   noarch        3.3.0-9.amzn2023.0.4             amazonlinux        254 k
+ publicsuffix-list                              noarch        20240212-61.amzn2023             amazonlinux         89 k
+ sisu                                           noarch        1:0.3.4-9.amzn2023.0.4           amazonlinux        510 k
+ slf4j                                          noarch        1.7.32-3.amzn2023.0.4            amazonlinux         70 k
+
+Transaction Summary
+========================================================================================================================
+Install  31 Packages
+
+Total download size: 9.7 M
+Installed size: 13 M
+Downloading Packages:
+(1/31): apache-commons-codec-1.15-6.amzn2023.0.3.noarch.rpm                             7.4 MB/s | 303 kB     00:00
+(2/31): apache-commons-cli-1.5.0-3.amzn2023.0.3.noarch.rpm                              1.7 MB/s |  76 kB     00:00
+(3/31): apache-commons-io-2.8.0-7.amzn2023.0.5.noarch.rpm                               5.7 MB/s | 283 kB     00:00
+(4/31): atinject-1.0.5-3.amzn2023.0.3.noarch.rpm                                        1.2 MB/s |  23 kB     00:00
+(5/31): cdi-api-2.0.2-6.amzn2023.0.3.noarch.rpm                                         2.5 MB/s |  54 kB     00:00
+(6/31): apache-commons-lang3-3.18.0-1.amzn2023.0.1.noarch.rpm                            19 MB/s | 655 kB     00:00
+(7/31): google-guice-4.2.3-8.amzn2023.0.6.noarch.rpm                                     16 MB/s | 473 kB     00:00
+(8/31): httpcomponents-client-4.5.13-4.amzn2023.0.4.noarch.rpm                           23 MB/s | 657 kB     00:00
+(9/31): guava-31.0.1-3.amzn2023.0.6.noarch.rpm                                           52 MB/s | 2.4 MB     00:00
+(10/31): httpcomponents-core-4.4.13-6.amzn2023.0.3.noarch.rpm                            20 MB/s | 632 kB     00:00
+(11/31): jakarta-annotations-1.3.5-13.amzn2023.0.3.noarch.rpm                           1.9 MB/s |  46 kB     00:00
+(12/31): jansi-2.4.0-3.amzn2023.0.3.x86_64.rpm                                          4.4 MB/s | 113 kB     00:00
+(13/31): java-17-amazon-corretto-devel-17.0.16+8-1.amzn2023.1.x86_64.rpm                5.3 MB/s | 142 kB     00:00
+(14/31): jcl-over-slf4j-1.7.32-3.amzn2023.0.4.noarch.rpm                                1.0 MB/s |  25 kB     00:00
+(15/31): jsoup-1.16.1-4.amzn2023.0.2.noarch.rpm                                          17 MB/s | 433 kB     00:00
+(16/31): maven-3.8.4-3.amzn2023.0.5.noarch.rpm                                          906 kB/s |  18 kB     00:00
+(17/31): jsr-305-3.0.2-5.amzn2023.0.4.noarch.rpm                                        1.4 MB/s |  32 kB     00:00
+(18/31): maven-amazon-corretto17-3.8.4-3.amzn2023.0.5.noarch.rpm                        476 kB/s | 9.4 kB     00:00
+(19/31): maven-resolver-1.7.3-3.amzn2023.0.4.noarch.rpm                                  19 MB/s | 557 kB     00:00
+(20/31): maven-lib-3.8.4-3.amzn2023.0.5.noarch.rpm                                       39 MB/s | 1.5 MB     00:00
+(21/31): maven-shared-utils-3.3.4-4.amzn2023.0.3.noarch.rpm                             5.7 MB/s | 152 kB     00:00
+(22/31): maven-wagon-3.4.2-6.amzn2023.0.4.noarch.rpm                                    4.8 MB/s | 113 kB     00:00
+(23/31): plexus-cipher-1.8-3.amzn2023.0.3.noarch.rpm                                    1.3 MB/s |  27 kB     00:00
+(24/31): plexus-classworlds-2.6.0-10.amzn2023.0.4.noarch.rpm                            2.8 MB/s |  61 kB     00:00
+(25/31): plexus-containers-component-annotations-2.1.0-9.amzn2023.0.4.noarch.rpm        1.0 MB/s |  19 kB     00:00
+(26/31): plexus-interpolation-1.26-10.amzn2023.0.4.noarch.rpm                           3.3 MB/s |  80 kB     00:00
+(27/31): plexus-sec-dispatcher-2.0-3.amzn2023.0.3.noarch.rpm                            1.5 MB/s |  34 kB     00:00
+(28/31): plexus-utils-3.3.0-9.amzn2023.0.4.noarch.rpm                                    11 MB/s | 254 kB     00:00
+(29/31): sisu-0.3.4-9.amzn2023.0.4.noarch.rpm                                            21 MB/s | 510 kB     00:00
+(30/31): publicsuffix-list-20240212-61.amzn2023.noarch.rpm                              3.2 MB/s |  89 kB     00:00
+(31/31): slf4j-1.7.32-3.amzn2023.0.4.noarch.rpm                                         3.8 MB/s |  70 kB     00:00
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                    28 MB/s | 9.7 MB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Installing       : slf4j-1.7.32-3.amzn2023.0.4.noarch                                                            1/31
+  Installing       : plexus-utils-3.3.0-9.amzn2023.0.4.noarch                                                      2/31
+  Installing       : atinject-1.0.5-3.amzn2023.0.3.noarch                                                          3/31
+  Installing       : plexus-containers-component-annotations-2.1.0-9.amzn2023.0.4.noarch                           4/31
+  Installing       : plexus-classworlds-2.6.0-10.amzn2023.0.4.noarch                                               5/31
+  Installing       : plexus-cipher-1.8-3.amzn2023.0.3.noarch                                                       6/31
+  Installing       : jakarta-annotations-1.3.5-13.amzn2023.0.3.noarch                                              7/31
+  Installing       : httpcomponents-core-4.4.13-6.amzn2023.0.3.noarch                                              8/31
+  Installing       : apache-commons-lang3-3.18.0-1.amzn2023.0.1.noarch                                             9/31
+  Installing       : apache-commons-io-1:2.8.0-7.amzn2023.0.5.noarch                                              10/31
+  Installing       : maven-shared-utils-3.3.4-4.amzn2023.0.3.noarch                                               11/31
+  Installing       : plexus-sec-dispatcher-2.0-3.amzn2023.0.3.noarch                                              12/31
+  Installing       : cdi-api-2.0.2-6.amzn2023.0.3.noarch                                                          13/31
+  Installing       : sisu-1:0.3.4-9.amzn2023.0.4.noarch                                                           14/31
+  Installing       : jcl-over-slf4j-1.7.32-3.amzn2023.0.4.noarch                                                  15/31
+  Installing       : publicsuffix-list-20240212-61.amzn2023.noarch                                                16/31
+  Installing       : plexus-interpolation-1.26-10.amzn2023.0.4.noarch                                             17/31
+  Installing       : jsr-305-3.0.2-5.amzn2023.0.4.noarch                                                          18/31
+  Installing       : guava-31.0.1-3.amzn2023.0.6.noarch                                                           19/31
+  Installing       : google-guice-4.2.3-8.amzn2023.0.6.noarch                                                     20/31
+  Installing       : jsoup-1.16.1-4.amzn2023.0.2.noarch                                                           21/31
+  Installing       : java-17-amazon-corretto-devel-1:17.0.16+8-1.amzn2023.1.x86_64                                22/31
+  Running scriptlet: java-17-amazon-corretto-devel-1:17.0.16+8-1.amzn2023.1.x86_64                                22/31
+  Installing       : jansi-2.4.0-3.amzn2023.0.3.x86_64                                                            23/31
+  Installing       : apache-commons-codec-1.15-6.amzn2023.0.3.noarch                                              24/31
+  Installing       : httpcomponents-client-4.5.13-4.amzn2023.0.4.noarch                                           25/31
+  Installing       : maven-wagon-3.4.2-6.amzn2023.0.4.noarch                                                      26/31
+  Installing       : maven-resolver-1:1.7.3-3.amzn2023.0.4.noarch                                                 27/31
+  Installing       : apache-commons-cli-1.5.0-3.amzn2023.0.3.noarch                                               28/31
+  Installing       : maven-lib-1:3.8.4-3.amzn2023.0.5.noarch                                                      29/31
+  Installing       : maven-amazon-corretto17-1:3.8.4-3.amzn2023.0.5.noarch                                        30/31
+  Installing       : maven-1:3.8.4-3.amzn2023.0.5.noarch                                                          31/31
+  Running scriptlet: maven-1:3.8.4-3.amzn2023.0.5.noarch                                                          31/31
+  Verifying        : apache-commons-cli-1.5.0-3.amzn2023.0.3.noarch                                                1/31
+  Verifying        : apache-commons-codec-1.15-6.amzn2023.0.3.noarch                                               2/31
+  Verifying        : apache-commons-io-1:2.8.0-7.amzn2023.0.5.noarch                                               3/31
+  Verifying        : apache-commons-lang3-3.18.0-1.amzn2023.0.1.noarch                                             4/31
+  Verifying        : atinject-1.0.5-3.amzn2023.0.3.noarch                                                          5/31
+  Verifying        : cdi-api-2.0.2-6.amzn2023.0.3.noarch                                                           6/31
+  Verifying        : google-guice-4.2.3-8.amzn2023.0.6.noarch                                                      7/31
+  Verifying        : guava-31.0.1-3.amzn2023.0.6.noarch                                                            8/31
+  Verifying        : httpcomponents-client-4.5.13-4.amzn2023.0.4.noarch                                            9/31
+  Verifying        : httpcomponents-core-4.4.13-6.amzn2023.0.3.noarch                                             10/31
+  Verifying        : jakarta-annotations-1.3.5-13.amzn2023.0.3.noarch                                             11/31
+  Verifying        : jansi-2.4.0-3.amzn2023.0.3.x86_64                                                            12/31
+  Verifying        : java-17-amazon-corretto-devel-1:17.0.16+8-1.amzn2023.1.x86_64                                13/31
+  Verifying        : jcl-over-slf4j-1.7.32-3.amzn2023.0.4.noarch                                                  14/31
+  Verifying        : jsoup-1.16.1-4.amzn2023.0.2.noarch                                                           15/31
+  Verifying        : jsr-305-3.0.2-5.amzn2023.0.4.noarch                                                          16/31
+  Verifying        : maven-1:3.8.4-3.amzn2023.0.5.noarch                                                          17/31
+  Verifying        : maven-amazon-corretto17-1:3.8.4-3.amzn2023.0.5.noarch                                        18/31
+  Verifying        : maven-lib-1:3.8.4-3.amzn2023.0.5.noarch                                                      19/31
+  Verifying        : maven-resolver-1:1.7.3-3.amzn2023.0.4.noarch                                                 20/31
+  Verifying        : maven-shared-utils-3.3.4-4.amzn2023.0.3.noarch                                               21/31
+  Verifying        : maven-wagon-3.4.2-6.amzn2023.0.4.noarch                                                      22/31
+  Verifying        : plexus-cipher-1.8-3.amzn2023.0.3.noarch                                                      23/31
+  Verifying        : plexus-classworlds-2.6.0-10.amzn2023.0.4.noarch                                              24/31
+  Verifying        : plexus-containers-component-annotations-2.1.0-9.amzn2023.0.4.noarch                          25/31
+  Verifying        : plexus-interpolation-1.26-10.amzn2023.0.4.noarch                                             26/31
+  Verifying        : plexus-sec-dispatcher-2.0-3.amzn2023.0.3.noarch                                              27/31
+  Verifying        : plexus-utils-3.3.0-9.amzn2023.0.4.noarch                                                     28/31
+  Verifying        : publicsuffix-list-20240212-61.amzn2023.noarch                                                29/31
+  Verifying        : sisu-1:0.3.4-9.amzn2023.0.4.noarch                                                           30/31
+  Verifying        : slf4j-1.7.32-3.amzn2023.0.4.noarch                                                           31/31
+
+Installed:
+  apache-commons-cli-1.5.0-3.amzn2023.0.3.noarch
+  apache-commons-codec-1.15-6.amzn2023.0.3.noarch
+  apache-commons-io-1:2.8.0-7.amzn2023.0.5.noarch
+  apache-commons-lang3-3.18.0-1.amzn2023.0.1.noarch
+  atinject-1.0.5-3.amzn2023.0.3.noarch
+  cdi-api-2.0.2-6.amzn2023.0.3.noarch
+  google-guice-4.2.3-8.amzn2023.0.6.noarch
+  guava-31.0.1-3.amzn2023.0.6.noarch
+  httpcomponents-client-4.5.13-4.amzn2023.0.4.noarch
+  httpcomponents-core-4.4.13-6.amzn2023.0.3.noarch
+  jakarta-annotations-1.3.5-13.amzn2023.0.3.noarch
+  jansi-2.4.0-3.amzn2023.0.3.x86_64
+  java-17-amazon-corretto-devel-1:17.0.16+8-1.amzn2023.1.x86_64
+  jcl-over-slf4j-1.7.32-3.amzn2023.0.4.noarch
+  jsoup-1.16.1-4.amzn2023.0.2.noarch
+  jsr-305-3.0.2-5.amzn2023.0.4.noarch
+  maven-1:3.8.4-3.amzn2023.0.5.noarch
+  maven-amazon-corretto17-1:3.8.4-3.amzn2023.0.5.noarch
+  maven-lib-1:3.8.4-3.amzn2023.0.5.noarch
+  maven-resolver-1:1.7.3-3.amzn2023.0.4.noarch
+  maven-shared-utils-3.3.4-4.amzn2023.0.3.noarch
+  maven-wagon-3.4.2-6.amzn2023.0.4.noarch
+  plexus-cipher-1.8-3.amzn2023.0.3.noarch
+  plexus-classworlds-2.6.0-10.amzn2023.0.4.noarch
+  plexus-containers-component-annotations-2.1.0-9.amzn2023.0.4.noarch
+  plexus-interpolation-1.26-10.amzn2023.0.4.noarch
+  plexus-sec-dispatcher-2.0-3.amzn2023.0.3.noarch
+  plexus-utils-3.3.0-9.amzn2023.0.4.noarch
+  publicsuffix-list-20240212-61.amzn2023.noarch
+  sisu-1:0.3.4-9.amzn2023.0.4.noarch
+  slf4j-1.7.32-3.amzn2023.0.4.noarch
+
+Complete!
+[root@jenkins jenkins]# mvn -v
+Apache Maven 3.8.4 (Red Hat 3.8.4-3.amzn2023.0.5)
+Maven home: /usr/share/maven
+Java version: 17.0.16, vendor: Amazon.com Inc., runtime: /usr/lib/jvm/java-17-amazon-corretto.x86_64
+Default locale: en, platform encoding: UTF-8
+OS name: "linux", version: "6.1.150-174.273.amzn2023.x86_64", arch: "amd64", family: "unix"
+[root@jenkins jenkins]# yum install git -y
+Last metadata expiration check: 3:26:36 ago on Fri Sep 26 06:42:37 2025.
+Dependencies resolved.
+========================================================================================================================
+ Package                       Architecture        Version                               Repository                Size
+========================================================================================================================
+Installing:
+ git                           x86_64              2.50.1-1.amzn2023.0.1                 amazonlinux               53 k
+Installing dependencies:
+ git-core                      x86_64              2.50.1-1.amzn2023.0.1                 amazonlinux              4.9 M
+ git-core-doc                  noarch              2.50.1-1.amzn2023.0.1                 amazonlinux              2.8 M
+ perl-Error                    noarch              1:0.17029-5.amzn2023.0.2              amazonlinux               41 k
+ perl-File-Find                noarch              1.37-477.amzn2023.0.7                 amazonlinux               25 k
+ perl-Git                      noarch              2.50.1-1.amzn2023.0.1                 amazonlinux               41 k
+ perl-TermReadKey              x86_64              2.38-9.amzn2023.0.2                   amazonlinux               36 k
+ perl-lib                      x86_64              0.65-477.amzn2023.0.7                 amazonlinux               15 k
+
+Transaction Summary
+========================================================================================================================
+Install  8 Packages
+
+Total download size: 7.9 M
+Installed size: 41 M
+Downloading Packages:
+(1/8): git-2.50.1-1.amzn2023.0.1.x86_64.rpm                                             1.5 MB/s |  53 kB     00:00
+(2/8): perl-Error-0.17029-5.amzn2023.0.2.noarch.rpm                                     1.8 MB/s |  41 kB     00:00
+(3/8): git-core-doc-2.50.1-1.amzn2023.0.1.noarch.rpm                                     36 MB/s | 2.8 MB     00:00
+(4/8): perl-File-Find-1.37-477.amzn2023.0.7.noarch.rpm                                  1.1 MB/s |  25 kB     00:00
+(5/8): perl-Git-2.50.1-1.amzn2023.0.1.noarch.rpm                                        1.8 MB/s |  41 kB     00:00
+(6/8): git-core-2.50.1-1.amzn2023.0.1.x86_64.rpm                                         38 MB/s | 4.9 MB     00:00
+(7/8): perl-TermReadKey-2.38-9.amzn2023.0.2.x86_64.rpm                                  753 kB/s |  36 kB     00:00
+(8/8): perl-lib-0.65-477.amzn2023.0.7.x86_64.rpm                                        490 kB/s |  15 kB     00:00
+------------------------------------------------------------------------------------------------------------------------
+Total                                                                                    39 MB/s | 7.9 MB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                1/1
+  Installing       : git-core-2.50.1-1.amzn2023.0.1.x86_64                                                          1/8
+  Installing       : git-core-doc-2.50.1-1.amzn2023.0.1.noarch                                                      2/8
+  Installing       : perl-lib-0.65-477.amzn2023.0.7.x86_64                                                          3/8
+  Installing       : perl-TermReadKey-2.38-9.amzn2023.0.2.x86_64                                                    4/8
+  Installing       : perl-File-Find-1.37-477.amzn2023.0.7.noarch                                                    5/8
+  Installing       : perl-Error-1:0.17029-5.amzn2023.0.2.noarch                                                     6/8
+  Installing       : perl-Git-2.50.1-1.amzn2023.0.1.noarch                                                          7/8
+  Installing       : git-2.50.1-1.amzn2023.0.1.x86_64                                                               8/8
+  Running scriptlet: git-2.50.1-1.amzn2023.0.1.x86_64                                                               8/8
+  Verifying        : git-2.50.1-1.amzn2023.0.1.x86_64                                                               1/8
+  Verifying        : git-core-2.50.1-1.amzn2023.0.1.x86_64                                                          2/8
+  Verifying        : git-core-doc-2.50.1-1.amzn2023.0.1.noarch                                                      3/8
+  Verifying        : perl-Error-1:0.17029-5.amzn2023.0.2.noarch                                                     4/8
+  Verifying        : perl-File-Find-1.37-477.amzn2023.0.7.noarch                                                    5/8
+  Verifying        : perl-Git-2.50.1-1.amzn2023.0.1.noarch                                                          6/8
+  Verifying        : perl-TermReadKey-2.38-9.amzn2023.0.2.x86_64                                                    7/8
+  Verifying        : perl-lib-0.65-477.amzn2023.0.7.x86_64                                                          8/8
+
+Installed:
+  git-2.50.1-1.amzn2023.0.1.x86_64                            git-core-2.50.1-1.amzn2023.0.1.x86_64
+  git-core-doc-2.50.1-1.amzn2023.0.1.noarch                   perl-Error-1:0.17029-5.amzn2023.0.2.noarch
+  perl-File-Find-1.37-477.amzn2023.0.7.noarch                 perl-Git-2.50.1-1.amzn2023.0.1.noarch
+  perl-TermReadKey-2.38-9.amzn2023.0.2.x86_64                 perl-lib-0.65-477.amzn2023.0.7.x86_64
+
+Complete!
+[root@jenkins jenkins]# systemctl restart jenkins
+client_loop: send disconnect: Connection reset
+PS C:\Users\10844406\downloads>
+
+
+TOMCAT SERVER
+
+
+[ec2-user@ip-172-31-53-65 ~]$ sudo su -
+[root@ip-172-31-53-65 ~]# passwd
+Changing password for user root.
+New password:
+BAD PASSWORD: The password fails the dictionary check - it is based on a dictionary word
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[root@ip-172-31-53-65 ~]# hostnamectl set-hostname tomcat.example.com
+[root@ip-172-31-53-65 ~]# bash
+[root@tomcat ~]# yum install java* -y
+Amazon Linux 2023 Kernel Livepatch repository                                           206 kB/s |  23 kB     00:00
+Dependencies resolved.
+
+ yum install wget https://tomcat.apache.org/[preferred]tomcat/tomcat-9/v[v]/bin/apache-tomcat-[v].tar.gz
+
+ ll
+total 0
+[root@tomcat ~]#
+[root@tomcat ~]# wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.109/bin/apache-tomcat-9.0.109.tar.gz
+[root@tomcat ~]# cd apache-tomcat-9.0.109
+[root@tomcat apache-tomcat-9.0.109]# mv apache-tomcat-9.0.109 /tmp/
+ cd /
+[root@tomcat /]# ll
+[root@tomcat /]# cd tmp/
+[root@tomcat tmp]# ll
+
+[root@tomcat apache-tomcat-9.0.109]# cd bin
+[root@tomcat bin]# ll
+[root@tomcat bin]# chmod +x startup.sh
+[root@tomcat bin]# chmod +x shutdown.sh
+[root@tomcat bin]# ./startup.sh
+
+
+[root@tomcat bin]# cd
+[root@tomcat ~]# cd /root
+[root@tomcat ~]# cd /
+[root@tomcat /]# ll
+[root@tomcat apache-tomcat-9.0.109]# cd conf
+[root@tomcat conf]# ll
+
+[root@tomcat conf]# vim tomcat-users.xml
+
+[root@tomcat conf]# cd ..
+[root@tomcat apache-tomcat-9.0.109]# find -name context.xml
+./webapps/docs/META-INF/context.xml
+./webapps/host-manager/META-INF/context.xml
+./webapps/manager/META-INF/context.xml
+./webapps/examples/META-INF/context.xml
+./conf/context.xml
+[root@tomcat apache-tomcat-9.0.109]# vim webapps/host-manager/META-INF/context.xml
+"webapps/host-manager/META-INF/context.xml" 24L, 1359B written
+[root@tomcat apache-tomcat-9.0.109]# vim webapps/manager/META-INF/context.xml
+[root@tomcat apache-tomcat-9.0.109]# vim webapps/examples/META-INF/context.xml
+[root@tomcat apache-tomcat-9.0.109]# ll
+total 124
+
+[root@tomcat apache-tomcat-9.0.109]# cd bin
+[root@tomcat bin]# ll
+
+[root@tomcat bin]# ./shutdown.sh
+
+[root@tomcat bin]# cd ..
+[root@tomcat apache-tomcat-9.0.109]# cd bin
+[root@tomcat bin]# ll
+[root@tomcat bin]# ./shutdown.sh
+[root@tomcat bin]# ./startup.sh

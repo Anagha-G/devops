@@ -1,0 +1,266 @@
+29th September,2025
+
+benefits of cloud computing-
+capital expenditure
+operational expenditure
+scale
+time saving
+upkeep
+
+
+LABS-
+create instance with custom http-port nu-80 and create key pair and security group
+on terminal-
+key par
+sudo su -
+hostnamectl set-hostname devserver.example.com
+bash
+hostname
+yum install httpd -y
+rpm -qa httpd
+cd /var/www/html
+echo "my server is running" >index.html
+ll
+cd
+systemctl start httpd
+systemctl enable httpd
+
+copy id:80 the server should run and display
+
+stop instance
+
+networks & security > elastic IP > Allocate
+network security > elastic IP > associate
+copy elastic ip:80 in new tab
+
+creating custom image-
+after stop > actions > create image 
+tag-tick mark > name-devops img > create image
+
+image-AMI > actions >associate
+start instance
+launch instance from AMI
+
+share image duplicate tab and change region and create instance
+
+
+
+30.09.25
+
+New instance> key pair and security group> 10 gib with gp2 >delete on termination-NO but now it should be yes.(dev-server)	In production it should be NO strictly.
+
+volumes >assign tag-root volume
+data-vol>5gb >gp2>create
+attach data-vol > first one > dev-server(running)
+
+in terminal of dev-server
+mkdir /data
+lsblk
+mkfs.ext4 /dev/nvme1n1
+mount /dev/nvme1n1 /data/
+
+cd /data/
+touch pooja.txt{1..100}
+
+in aws another instance with same security and key but zone 1b. 8gib with gp2
+launch this instance
+
+test server terminal
+df -h
+
+to connect zones using snapshots-
+create snapshot>
+resource type>volume then data vol
+description> this is datavol
+create snapshot 
+using snapshot create volume or add the snapshot id
+create another volume with us east 1b >5gib with gp2
+
+select this>action >attach volume> test server
+
+second terminal-
+lsblk
+mkdir /Sanjaya
+mount /dev/nvme1n1 /Sanjaya
+ll
+
+if there is another instance in ohio what will happen?
+
+first terminal
+cd
+
+in aws, data vol> detach volume and then delete 1a vala
+
+terminate dev server instance.
+
+take duplicate session-
+ohio region
+all below are ohio
+take snapshot >copy> us east 2 in n.vir region(5 gib> standard storage)
+it is reflected in ohio now.
+
+select snapshot>actions> create volume >
+
+create instance> new key pair> 2a> create security group >8 gp3> create instance
+
+attach volume to the above instance
+
+open terminal for new instance with new key pair-
+
+sudo su -
+lsblk
+mkdir /prod-data
+mount /dev/nvme1n1 /prod-data/
+cd /prod-data
+ll
+cd
+unmount /prod-data
+
+in first terminal-
+cd
+unmount /
+
+delete prod server and all snapshots and volumes in ohio and close tab.
+
+creating multi snapshot-
+
+create vol> gp2>1b> name it data vol
+before one root vol
+only test-server running.
+attach data volume to test server
+
+got to test terminal-
+lsblk
+mkfs.ext3 /dev/nvme1n1
+mkdir /data-one
+mount /dev/nvme1n1 /data-one
+cd /data-one/
+touch devops{1..100}.txt
+
+in AWS-
+create snapshot using instance
+8gb is for os and 4gb is data snapshot.
+
+delete snapshots
+
+All this while we were working with on demand instance now we will work with reserve instance.
+Reserved instance > linux>default>any>t2.medium>1 to 12 months >no upfront then search
+shows all costs.
+dedicated hosts are expensive solutions.
+
+spot requests dont use for production. bidding happens only gaming and other stuff u can use.
+
+test server is on the fly 
+create security group > operating sg >inbound mein ssh and http
+outbound mein custom tcp ?
+
+stop ec2 instance
+instances> change security group > inbound http and ssh> outbound all protocol > apply changes.
+
+After coffee break-
+
+in us east 1a-
+EFS> create file system > vpc> successfully created
+
+3 machines to be created-
+create instance> red hat > same key pair and security>prod-server >1b>10 gib
+amazon vala one > same >dev-server
+test-server >ubuntu >same security and key pair > region 1c>8 gib in gp2
+
+on linux-
+rpmquery nfs-utils
+
+in ubuntu-
+sudo su -
+apt update -y
+apt install nfs-common
+
+on redhat-
+sudo su -
+cat /etc/os-release
+yum install nfs-utils -y
+
+To connect all the file systems-
+goto efs - select fs> attach >mount via ip
+
+on redhat-
+mkdir /Sanjay
+
+on linux-
+mkdir /data
+sudo mount -t nfs(ctrl+v)
+
+sg>edit inbound rules > delete port 22 one
+> mount target > 3 zones
+
+
+on first one-
+df -h
+ctrl +v
+cd /devops/
+touch devops.txt{1..100}
+
+second one-
+
+third-
+
+
+if people are in diff regions then replication-
+create > replicate > choose > east 2 
+
+duplicate the page
+
+goto Ohio
+create fs > devops efs-name
+
+go to n.virg-
+
+replicate
+
+in ohio create new instance with new key pair and security group
+in terminal, sudo su -
+	mkdir /data
+in efs ohio, network>security group change add the created one.
+
+
+
+After lunch:-
+AWS Bucket > create > general > acs> uncheck >disable > ownership-default
+upload objects > images,pdf,docx > upload > success
+to access this object -> click on object > url (u will get error)
+bucket > permissions > ACLS enabled > enable > save changes
+Now, edit is enabled 
+read and list also tick
+object shd be enabled dont for bucket because it will be accessed everywhere without security.
+
+duplicate session in ohio and create instance with 10gb storage.
+
+open in terminal-
+cat /etc/os-release 
+df -h
+
+IAM 
+users > provide name and next > attach policy > amazons3fullaccess policy
+
+back to terminal
+install 
+aws configure
+ls -a
+cd .aws/
+ll
+cat config
+cat credentials
+
+sfs full documentation sir
+
+create another ec2 instance in Mumbai > windows > t3.medium > new key pair > 1a subnet > rdp > 30 gib in gp2.
+rdp client > download remote desktop file.
+open key and copy to get password
+
+awstnt drive
+download tnt drive 30 days is free
+
+
+
+to add files and mount on bucket from terminal:-
+create bucket > name > 

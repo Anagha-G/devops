@@ -1,0 +1,113 @@
+create subnets-
+subnetting is a lengthy calculator
+vlsm calci- 10.0.0.0 t0 2 - 250 150
+
+on AWS
+create vpc > vpc only > relevant name > ipv4 cidr- 10.0.0.0/16 > no ipv6 >create
+
+dont touch def vpc and igw
+
+create igw > name > create
+
+create subnet > same name > public-subnet > us east 1a > 10.0.0..0/16 &24 
+create subnet 2 > private > us east 1b > second range > create 10.0.1.0/24
+
+goto EC2 > LAUnCH instance-web server > create key pair > use your network > public subnet > create security grp > enable ip > ssh & http(anywhere) 80 > launch instance
+
+another vm > database server > same key pair > devops vpc > disable public ip > devops sec grp >8 gp3 > create >us east 1b
+
+Now on terminal-
+connection error-
+igw- attach to devops vpc
+
+private- no internet public-works
+
+create public route table > public rt > create
+edit route > add > igw >0.0.0.0/0 > igm 
+in route table-
+subnet associations > edit public associations > public subnet > select and save
+
+now terminal works-
+add all ipv4 icmp in inbound rules in web server
+
+open keypair ctrl+a ctrl +v
+
+on terminal -
+ping private ip of public instance
+vim custom-pc-key.pem
+ll -d cvk.pem
+chmod 400 cvk.pem
+ssh key on webserver with private ip of dataserver
+in database server-
+ping google.com
+still internet wont work
+we create network gateway access
+
+on aws-
+vpc > nat gateways > create > name > public subnet > public> allocate elastic ip > create
+
+create another route table > private >  vpc > save
+edit explicit subnet > 0.0.0.0/0- nat gateway
+subnet association > select private > save
+
+connection across cross region-
+create vpc environment different region in ohio
+create another vpc
+create subnet >prod-public > zone 2a > 20.0.0.0/24 > create
+create another subnet > prod-db-subnet > 20.0.1.0/24 >create
+
+create igw> prod-igw
+action >attach
+
+create route table > prod vpc > add route > igw 0.0.0.0/0 > save
+add subnet association
+
+ec2 > ohio-server > create key pair > select ur vpc > prod web subnet >  enable ip > create security > ssh And http(anywhere) and icmp4(anywhere &0.0..0/0 > create
+
+
+peering-
+vpc > another region > id >create in n.virg
+
+on terminal-
+hostnamectl set-hostname prod-web.example.com
+bash
+ping private ip of n.virg instance
+doesn't come
+ping with public ip
+you will get response
+
+in n.virg instance
+publicly ping works
+cat > Sanjaya.txt
+cat >> Sanjaya.txt
+vim /etc/ssh/sshd_conflict
+uncomment permit root
+pwd auth yes-passwd root
+
+cat > ltim.txt
+ll
+scp ltim.txt root@ip: /mnt
+
+systemctl start
+vim /etc/ssh/sshd_conflict > permitrootlogin and passwordlogin yes
+systemctl restart sshd
+systemctl enable sshd
+set pwd and file
+cd
+cd/tmp
+
+
+create peering connection-
+in n.virginia
+devops-toprod > devops vpc > my acc > another region > vpc id of ohio > 
+
+add route tabl > 20.0.0.0/16 > peering connection > save in us east 1
+in ohio > edit rout > 10.0.00/16 > peering > save
+
+ll
+scp Sanjaya.txt root@20.0
+
+vpc
+igw
+subnet
+
