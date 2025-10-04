@@ -546,4 +546,7 @@ and passwd root
 systemctl start sshd
 systemctl enable sshd
  cat > server.txt
+ssh-keygen
+cd /root/.ssh
+cat id_rsa.pub
  scp server.txt root@private ip of ohio prod-server:/tmp
