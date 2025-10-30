@@ -1,0 +1,643 @@
+Aesthetic website in GitHub actions-
+
+Create a s3 bucket(enable and version enable)
+open GitHub > add index.html file 
+change access on object file
+enable static hosting.
+add workflow file
+
+name: Upload Website
+ 
+on:
+  push:
+    branches:
+    - main
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+ 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+ 
+    - name: Deploy static site to S3 bucket
+      run: aws s3 sync ./ s3://devops-day-25 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+using ansible to launch ec2
+
+create ec2 instance and run following-
+ yum install ansible-core
+    2  cd /etc/ansible/
+    3  cat ansible.cfg
+    4  ll
+    5  vim ansible.cfg
+    6  yum install pip
+    7  pip install boto3
+    8  pip install boto
+    9  pip install botocore
+   10  cd
+   11  vim hosts
+   12  hostnamectl set-hostname devserver.example.com
+   13  bash
+   14  vim hosts
+   15  vim ec2.yaml
+   16  vim creds.yaml
+   26  cd /etc/ansible
+   27  vim hosts
+   30  ansible localhost --list-hosts
+   31  aws configure
+   32  ansible-galaxy collection install amazon.aws
+   36  ansible-playbook ec2.yaml --syntax-check
+   37  ssh-keygen
+   40  ansible-playbook ec2.yaml
+creds.yaml-
+
+---
+aws_access_key: 
+aws_secret_key: 
+ec2.yaml-
+
+---
+- name: creating ec2 instance
+  hosts: localhost
+  connection: local
+  vars_files:
+
+      - creds.yaml
+  tasks:
+        - name: creating Ec2 instance via Ansible
+          amazon.aws.ec2_instance:
+            name: k8s-master
+            instance_type: t3.micro
+            image_id: ami-07860a2d7eb515d9a
+            vpc_subnet_id: subnet-0c98675b3a32a6366
+            security_group: sg-08153bbfd7cfe0b88
+            key_name: ana-key
+            region: us-east-1
+            count: 1
+            state: present
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Docker ubuntu image pull-
+
+yum install docker* -y
+docker pull ubuntu
+systemctl start docker
+systemctl enable docker
+docker pull ubuntu
+docker run -it --name ubuntu-app -p 8080:80 ubuntu:latest /bin/bash
+apt update -y
+apt install apache2
+service apache2 start
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-------AMI to another region --------------
+
+Add one instance in N.Virg.
+with port 80(http) allowed
+   yum install httpd -y
+      echo "This is my website" >> /var/www/html/index.html
+     systemctl start httpd
+  systemctl enable httpd
+ curl http://localhost:80
+
+stop it before creating ami
+now to create ami 
+select instance and action and create image -> name and description -> create
+now go to ami and action -> copy -> give destination region ->default -> copy
+now create a duplicate session and move to ohio and click ami -> launch instance from ami and 
+instance name and make sure to add http securtiy group 
+and connection check 
+sudo su -
+rpmquery httpd
+curl http://localhost:80
+it works
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+terraform to create ec2 and security group-
+
+sudo dnf install -y dnf-plugins-core
+     sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+    sudo dnf -y install terraform
+   80  terraform init
+   81  aws configure
+   82  vim provider.tf
+   83  terraform fmt
+   84  terraform validate
+terraform plan
+terraform apply
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+#security group
+resource "aws_security_group" "web_access" {
+  name        = "web_access"
+  description = "allow ssh and http"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+}
+#security group end here
+
+
+resource "aws_instance" "web-server" {
+  ami               = "ami-07860a2d7eb515d9a"
+  availability_zone = "us-east-1a"
+  instance_type     = "t3.micro"
+  security_groups   = ["${aws_security_group.web_access.name}"]
+  tags = {
+    Name     = "hello-World"
+    Stage    = "testing"
+    Location = "INDIA"
+  }
+
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------          
+
+create multiple users using ansible-
+
+yum install ansible-core
+   aws configure
+    ssh-keygen
+    yum update -y
+     cd .ssh
+     vim authorized_keys
+cd /etc/ansible
+   17  ll
+   18  vim ansible.cfg
+   19  ll
+   20  vim hosts
+ansible all --list-hosts
+   23  vim create.yaml
+   24  ansible-playbook create.yaml --syntax-check
+in ans-one
+ssh-keygen
+    2  cd .ssh
+    3  cat id_rsa.pub
+    4  ip a s
+    5  vim authorized_keys
+    6  cd
+    7  tail /etc/passwd
+    8  systemctl status httpd
+
+ansible playbook-
+multiuser.yaml
+
+---
+- name: create multiple users
+  hosts: all
+  tasks:
+    - name: create multiple users
+      user:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - sanjaya
+        - Dracula
+        - ironman
+        - jahnavi
+
+
+ansible-playbook users.yaml --syntax-check
+ansible-playbook users.yaml
+(in node 1 and node 2 write tail /etc/passwd)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+create a instance using c7i-flex.large size and add k8s ports ubuntu instance create one node also allow 80
+vim k8s.sh
+
+# disable swap
+sudo swapoff -a
+
+# Create the .conf file to load the modules at bootup
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# sysctl params required by setup, params persist across reboots
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+## Install CRIO Runtime
+sudo apt-get update -y
+sudo apt-get install -y software-properties-common curl apt-transport-https ca-certificates gpg
+
+sudo curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+
+sudo apt-get update -y
+sudo apt-get install -y cri-o
+
+sudo systemctl daemon-reload
+sudo systemctl enable crio --now
+sudo systemctl start crio.service
+
+echo "CRI runtime installed successfully"
+
+# Add Kubernetes APT repository and install required packages
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update -y
+sudo apt-get install -y kubelet="1.32.0-*" kubectl="1.32.0-*" kubeadm="1.32.0-*"
+sudo apt-get update -y
+sudo apt-get install -y jq
+
+sudo systemctl enable --now kubelet
+sudo systemctl start kubelet
+
+## Execute ONLY on "Master Node"
+
+sudo kubeadm config images pull
+
+sudo kubeadm init
+
+mkdir -p "$HOME"/.kube
+sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
+sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
+
+
+# Network Plugin = calico
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+
+
+
+chmod +x k8s.sh
+./k8s.sh
+
+in another node
+vim node.sh  (change token)
+
+# disable swap
+sudo swapoff -a
+
+# Create the .conf file to load the modules at bootup
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# sysctl params required by setup, params persist across reboots
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+## Install CRIO Runtime
+sudo apt-get update -y
+sudo apt-get install -y software-properties-common curl apt-transport-https ca-certificates gpg
+
+sudo curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+
+sudo apt-get update -y
+sudo apt-get install -y cri-o
+
+sudo systemctl daemon-reload
+sudo systemctl enable crio --now
+sudo systemctl start crio.service
+
+echo "CRI runtime installed successfully"
+
+# Add Kubernetes APT repository and install required packages
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update -y
+sudo apt-get install -y kubelet="1.32.0-*" kubectl="1.32.0-*" kubeadm="1.32.0-*"
+sudo apt-get update -y
+sudo apt-get install -y jq
+
+sudo systemctl enable --now kubelet
+sudo systemctl start kubelet
+##Note Plz replace this token from your cluster Token
+kubeadm join 172.31.33.207:6443 --token reu77r.ct7icljh22oxqq5d --discovery-token-ca-cert-hash sha256:bffcb090c7322b01e58a954a2e808c5c02e6891e6e69807d0436cab8abf100d8
+
+chmod +x node1.sh
+./node1.sh
+
+now in master node
+ kubectl get nodes
+
+vim deploy.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devops
+spec:
+  containers:
+  - name: web-app
+    image: nginx:1.14
+    ports:
+    - containerPort: 80
+ 
+kubectl apply -f deploy.yaml
+kubectl get pods
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+create a instance using c7i-flex.large size and add k8s ports ubuntu instance create one node also
+vim k8s.sh
+
+# disable swap
+sudo swapoff -a
+
+# Create the .conf file to load the modules at bootup
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# sysctl params required by setup, params persist across reboots
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+## Install CRIO Runtime
+sudo apt-get update -y
+sudo apt-get install -y software-properties-common curl apt-transport-https ca-certificates gpg
+
+sudo curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+
+sudo apt-get update -y
+sudo apt-get install -y cri-o
+
+sudo systemctl daemon-reload
+sudo systemctl enable crio --now
+sudo systemctl start crio.service
+
+echo "CRI runtime installed successfully"
+
+# Add Kubernetes APT repository and install required packages
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update -y
+sudo apt-get install -y kubelet="1.32.0-*" kubectl="1.32.0-*" kubeadm="1.32.0-*"
+sudo apt-get update -y
+sudo apt-get install -y jq
+
+sudo systemctl enable --now kubelet
+sudo systemctl start kubelet
+
+## Execute ONLY on "Master Node"
+
+sudo kubeadm config images pull
+
+sudo kubeadm init
+
+mkdir -p "$HOME"/.kube
+sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
+sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
+
+
+# Network Plugin = calico
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+
+
+
+chmod +x k8s.sh
+./k8s.sh
+
+in another node
+vim node.sh  (change token)
+
+# disable swap
+sudo swapoff -a
+
+# Create the .conf file to load the modules at bootup
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+# sysctl params required by setup, params persist across reboots
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+# Apply sysctl params without reboot
+sudo sysctl --system
+
+## Install CRIO Runtime
+sudo apt-get update -y
+sudo apt-get install -y software-properties-common curl apt-transport-https ca-certificates gpg
+
+sudo curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+
+sudo apt-get update -y
+sudo apt-get install -y cri-o
+
+sudo systemctl daemon-reload
+sudo systemctl enable crio --now
+sudo systemctl start crio.service
+
+echo "CRI runtime installed successfully"
+
+# Add Kubernetes APT repository and install required packages
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update -y
+sudo apt-get install -y kubelet="1.32.0-*" kubectl="1.32.0-*" kubeadm="1.32.0-*"
+sudo apt-get update -y
+sudo apt-get install -y jq
+
+sudo systemctl enable --now kubelet
+sudo systemctl start kubelet
+##Note Plz replace this token from your cluster Token
+kubeadm join 172.31.33.207:6443 --token reu77r.ct7icljh22oxqq5d --discovery-token-ca-cert-hash sha256:bffcb090c7322b01e58a954a2e808c5c02e6891e6e69807d0436cab8abf100d8
+
+chmod +x node1.sh
+./node1.sh
+
+now in master node
+ kubectl get nodes
+ vim deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: nginx-deployment
+ labels:
+   app: web
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+    app: web
+ template:
+   metadata:
+     labels:
+       app: web
+   spec:
+    containers:
+    - name: web
+      image: nginx:1.14
+      ports:
+      - containerPort: 80
+
+
+vim hpa.yaml
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+ name: my-app-hpa
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: nginx-deployment
+ minReplicas: 4
+ maxReplicas: 10
+ metrics:
+   - type: Resource
+     resource:
+       name: cpu
+       target:
+         type: Utilization
+         averageUtilization: 50
+
+kubectl apply -f deployment.yaml
+kubectl get pods
+ kubectl apply -f hpa.yaml
+
+kubectl delete hpa hpaname
+kubectl delete deploy deployment-name
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+using ansible enable and start httpd and copy fstab tmp-
+
+ 1  yum update -y
+    2  aws configure
+    3  ssh-keygen
+    4  cd .ssh
+    5  ll
+    6  cat id_rsa.pub
+    7  vim authorized_keys
+    8  cd
+    9  cd /etc/ansible
+   10  ll
+   11  vim ansible.cfg
+   12  vim hosts
+   13  vim create.yaml
+   14  ansible-playbook create.yaml --syntax-check
+   15  ansible-playbook create.yaml
+   16  cd /etc/fstab
+   17  vim /etc/fstab
+
+in second instance-
+
+ 1  ssh-keygen
+    2  cd .ssh
+    3  vim authorized_keys
+    4  cat id_rsa.pun
+    5  cat id_rsa.pub
+    6  cd
+    7  ll
+    8  ls
+    9  cd /
+   10  ll
+   11  cd etc
+   12  ll
+   13  vim fstab
+
+playbook file-
+---
+- name: anagha
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Install httpd
+      dnf:
+        name: httpd
+        state: latest
+    - name: Start and enable httpd service
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Ensure /tmp directory exists
+      file:
+        path: /tmp
+        state: directory
+        mode: '0755'
+
+    - name: Copy fstab file to remote server
+      copy:
+        src: /etc/fstab
+        dest: /tmp/fstab
+        owner: root
+        group: root
+        mode: '0644'
+
+go to /etc/fstab on both the instances same content will be there u can share those screenshots.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
